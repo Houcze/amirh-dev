@@ -263,7 +263,8 @@ int main(void)
 
     std::list<Func> fl
     {
-        Sin
+        Sin,
+        Cos
     };
     Seq b{fl};
 
