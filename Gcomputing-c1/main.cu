@@ -217,6 +217,9 @@ int Seq::IN(int INum)
 
 __device__ double dsin(double x) {return sin(x);}
 __device__ double dcos(double x) {return cos(x);}
+__device__ F1 fp_sin = dsin;
+__device__ F1 fp_cos = dcos;
+
 
 int main(void)
 {
@@ -251,13 +254,16 @@ int main(void)
 
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
-    Func Sin{wid, len, dsin};
-    Func Cos{wid, len, dcos};
+    F1 fsin;
+    cudaMemcpyFromSymbol(&fsin, fp_sin, sizeof(F1));
+    F1 fcos;
+    cudaMemcpyFromSymbol(&fcos, fp_cos, sizeof(F1));
+    Func Sin{wid, len, fsin};
+    Func Cos{wid, len, fcos};
 
     std::list<Func> fl
     {
-        Sin,
-        Cos
+        Sin
     };
     Seq b{fl};
 
