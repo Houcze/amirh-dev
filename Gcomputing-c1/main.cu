@@ -102,10 +102,10 @@ int Func::run()
     switch (InputNum)
     {
     case 1:
-        Ops<<<ceil(wid * len / double(1024)), 1024>>>(x, result, *f1, wid, len);
+        Ops<<<ceil(wid * len / double(32)), 32>>>(x, result, *f1, wid, len);
         break;
     case 2:
-        Ops<<<ceil(wid * len / double(1024)), 1024>>>(x, y, result, *f2, wid, len);
+        Ops<<<ceil(wid * len / double(32)), 32>>>(x, y, result, *f2, wid, len);
         break;    
     
     default:
@@ -237,7 +237,7 @@ int main(void)
     {
         for(int j=0; j<len; j++)
         {
-            host_x1[i * wid + j] = 0;
+            host_x1[i * wid + j] = 0.;
             host_x2[i * wid + j] = 2.;
         }
     }
