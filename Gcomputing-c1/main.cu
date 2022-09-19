@@ -255,9 +255,9 @@ int main(void)
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
     F1 fsin;
-    cudaMemcpyFromSymbol(&fsin, *dsin, sizeof(F1));
+    cudaMemcpyFromSymbol(&fsin, fp_sin, sizeof(F1));
     F1 fcos;
-    cudaMemcpyFromSymbol(&fcos, *dcos, sizeof(F1));
+    cudaMemcpyFromSymbol(&fcos, fp_cos, sizeof(F1));
     Func Sin{wid, len, fsin};
     Func Cos{wid, len, fcos};
 
@@ -277,7 +277,6 @@ int main(void)
     hostRst = hostMem(wid, len);
 
     cudaMemcpy(hostRst, rst, wid * len * sizeof(double), cudaMemcpyDeviceToHost);
-
 
     for(int i=0; i<wid; i++)
     {
