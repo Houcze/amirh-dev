@@ -102,10 +102,10 @@ int Func::run()
     switch (InputNum)
     {
     case 1:
-        Ops<<<ceil(wid * len / double(32)), 32>>>(x, result, *f1, wid, len);
+        Ops<<<ceil(wid * len / double(1024)), 1024>>>(x, result, *f1, wid, len);
         break;
     case 2:
-        Ops<<<ceil(wid * len / double(32)), 32>>>(x, y, result, *f2, wid, len);
+        Ops<<<ceil(wid * len / double(1024)), 1024>>>(x, y, result, *f2, wid, len);
         break;    
     
     default:
@@ -223,8 +223,8 @@ __device__ F1 fp_cos = dcos;
 
 int main(void)
 {
-    int wid{100};
-    int len{100};
+    int wid{6000};
+    int len{12000};
     double* host_x1;
     double* host_x2;
     host_x1 = hostMem(wid, len);
@@ -255,9 +255,9 @@ int main(void)
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
     F1 fsin;
-    cudaMemcpyFromSymbol(&fsin, fp_sin, sizeof(F1));
+    cudaMemcpyFromSymbol(&fsin, *dsin, sizeof(F1));
     F1 fcos;
-    cudaMemcpyFromSymbol(&fcos, fp_cos, sizeof(F1));
+    cudaMemcpyFromSymbol(&fcos, *dcos, sizeof(F1));
     Func Sin{wid, len, fsin};
     Func Cos{wid, len, fcos};
 
