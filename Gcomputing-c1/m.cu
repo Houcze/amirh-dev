@@ -1,6 +1,63 @@
+#include <cstdlib>
+#include <iostream>
+#include <cmath>
+#include <list>
 #include <cuda_runtime.h>
-#include "Func.h"
 #define NodeSuccess 1
+
+double* devMem(int w, int l)
+{
+    // 模拟内存池
+    double* MemBlock;
+    cudaMalloc(&MemBlock, w * l * sizeof(double));
+    return MemBlock;
+}
+
+double* hostMem(int w, int l)
+{
+    return (double*) malloc(w * l * sizeof(double));
+}
+
+typedef double (*F1)(double);
+typedef double (*F2)(double, double);
+
+class Func
+{
+    private:
+        int InputNum;
+        int wid;
+        int len;
+        double *x;
+        double *y;
+        double *result;
+        F1 f1;
+        F2 f2;
+    public:
+        Func(int m, int n, double (*f)(double));
+        Func(int m, int n, double (*f)(double, double));
+        int Input(double *, double *);
+        int Input(double *);
+        int rst(double *);
+        int run();
+};
+
+class Seq
+{
+    private:
+        int InputNum;
+        double *x;
+        double *y;
+        double *result;
+    public:
+        Seq(std::list<Func> fl);
+        int IN(int);
+        std::list<Func> l;
+        int Input(double *);
+        int Input(double *, double *);
+        int rst(double *);
+        int run();
+};
+
 
 // Add
 Func::Func(int m, int n, double (*f)(double, double))
@@ -158,6 +215,7 @@ int Seq::IN(int INum)
     return EXIT_SUCCESS;
 }
 
+
 __device__ double dsin(double x) {return sin(x);}
 __device__ double dcos(double x) {return cos(x);}
 __device__ double dtan(double x) {return sin(x) / cos(x);}
@@ -168,3 +226,77 @@ __device__ F1 fp_tan = dtan;
 __device__ F1 fp_cot = dcot;
 
 
+int main(void)
+{
+    int wid{6000};
+    int len{12000};
+    double* host_x1;
+    double* host_x2;
+    host_x1 = hostMem(wid, len);
+    host_x2 = hostMem(wid, len);
+
+    double* x1;
+    double* x2;
+
+    x1 = devMem(wid, len);
+    x2 = devMem(wid, len);
+
+    for(int i=0; i<wid; i++)
+    {
+        for(int j=0; j<len; j++)
+        {
+            host_x1[i * wid + j] = 0.;
+            host_x2[i * wid + j] = 2.;
+        }
+    }
+   cudaMemcpy(x1, host_x1, wid * len * sizeof(double), cudaMemcpyHostToDevice);
+   cudaMemcpy(x2, host_x2, wid * len * sizeof(double), cudaMemcpyHostToDevice);
+
+
+
+    double *rst;
+    rst = devMem(wid, len);
+
+    // Func Add{wid, len, add};
+    // Func Sub{wid, len, sub};
+    F1 fsin;
+    F1 fcos;
+    F1 ftan;
+    F1 fcot;
+    cudaMemcpyFromSymbol(&fsin, dsin, sizeof(F1));
+    cudaMemcpyFromSymbol(&fcos, dcos, sizeof(F1));
+    cudaMemcpyFromSymbol(&ftan, dtan, sizeof(F1));
+    cudaMemcpyFromSymbol(&fcot, dcot, sizeof(F1));
+    Func Sin{wid, len, fsin};
+    Func Cos{wid, len, fcos};
+    Func Tan{wid, len, ftan};
+    Func Cot{wid, len, fcot};
+
+    std::list<Func> fl
+    {
+        Sin,
+        Cos,
+        Tan
+    };
+    Seq b{fl};
+
+    b.IN(1);
+    b.Input(x1);
+    b.rst(rst);
+    b.run();
+
+    double* hostRst;
+    hostRst = hostMem(wid, len);
+
+    cudaMemcpy(hostRst, rst, wid * len * sizeof(double), cudaMemcpyDeviceToHost);
+    
+    for(int i=0; i<wid; i++)
+    {
+        for(int j=0; j<len; j++)
+        {
+            std::cout << hostRst[i * wid + j] << '\t';
+        }
+        std::cout << '\n';
+    }
+       
+}

@@ -3,8 +3,8 @@
 #include <cmath>
 #include <list>
 #include <cuda_runtime.h>
-#include "Func.h"
 #include "Mem.h"
+#include "Func.h"
 
 __device__ double dsin(double x) {return sin(x);}
 __device__ double dcos(double x) {return cos(x);}
@@ -14,7 +14,6 @@ __device__ F1 fp_sin = dsin;
 __device__ F1 fp_cos = dcos;
 __device__ F1 fp_tan = dtan;
 __device__ F1 fp_cot = dcot;
-
 
 int main(void)
 {
@@ -49,14 +48,6 @@ int main(void)
 
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
-    F1 fsin;
-    F1 fcos;
-    F1 ftan;
-    F1 fcot;
-    cudaMemcpyFromSymbol(&fsin, fp_sin, sizeof(F1));
-    cudaMemcpyFromSymbol(&fcos, fp_cos, sizeof(F1));
-    cudaMemcpyFromSymbol(&ftan, fp_tan, sizeof(F1));
-    cudaMemcpyFromSymbol(&fcot, fp_cot, sizeof(F1));
     Func Sin{wid, len, fsin};
     Func Cos{wid, len, fcos};
     Func Tan{wid, len, ftan};
@@ -65,7 +56,8 @@ int main(void)
     std::list<Func> fl
     {
         Sin,
-        Cos
+        Cos,
+        Tan
     };
     Seq b{fl};
 
