@@ -20,8 +20,6 @@ class Func
         int Input(double *, double *);
         int Input(double *);
         int rst(double *);
-        __device__ void Ops(double* x, double* result, F1 f1, int N1, int N2);
-        __device__ void Ops(double* x, double* y, double* result, F2 f2, int N1, int N2);
         int run();
 
 };
@@ -42,3 +40,6 @@ class Seq
         int rst(double *);
         int run();
 };
+
+__device__ void Ops(double* x, double* result, F1 f1, int N1, int N2);
+__device__ void Ops(double* x, double* y, double* result, F2 f2, int N1, int N2);
