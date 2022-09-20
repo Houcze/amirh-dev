@@ -263,10 +263,10 @@ int main(void)
     F1 fcos;
     F1 ftan;
     F1 fcot;
-    cudaMemcpyFromSymbol(&fsin, dsin, sizeof(F1));
-    cudaMemcpyFromSymbol(&fcos, dcos, sizeof(F1));
-    cudaMemcpyFromSymbol(&ftan, dtan, sizeof(F1));
-    cudaMemcpyFromSymbol(&fcot, dcot, sizeof(F1));
+    cudaMemcpyFromSymbol(&fsin, fp_sin, sizeof(F1));
+    cudaMemcpyFromSymbol(&fcos, fp_cos, sizeof(F1));
+    cudaMemcpyFromSymbol(&ftan, fp_tan, sizeof(F1));
+    cudaMemcpyFromSymbol(&fcot, fp_cot, sizeof(F1));
     Func Sin{wid, len, fsin};
     Func Cos{wid, len, fcos};
     Func Tan{wid, len, ftan};
