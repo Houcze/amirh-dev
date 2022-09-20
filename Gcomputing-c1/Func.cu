@@ -19,6 +19,25 @@ Func::Func(int m, int n, double (*f)(double))
     InputNum = 1;
 }
 
+int Func::Input(double* x1, double* x2)
+{
+    x = x1;
+    y = x2;
+    return EXIT_SUCCESS;
+}
+
+int Func::Input(double* x1)
+{
+    x = x1;
+    return EXIT_SUCCESS;
+}
+
+int Func::rst(double* rst)
+{
+    result = rst;
+    return EXIT_SUCCESS;
+}
+
 double add(double x1, double x2)
 {
     return x1 + x2;
