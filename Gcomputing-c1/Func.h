@@ -39,12 +39,3 @@ class Seq
         int rst(double *);
         int run();
 };
-
-__device__ double dsin(double x); 
-__device__ double dcos(double x);
-__device__ double dtan(double x); 
-__device__ double dcot(double x);
-__device__ F1 fp_sin;
-__device__ F1 fp_cos;
-__device__ F1 fp_tan;
-__device__ F1 fp_cot;
