@@ -41,5 +41,5 @@ class Seq
         int run();
 };
 
-__device__ void Ops(double* x, double* result, F1 f1, int N1, int N2);
-__device__ void Ops(double* x, double* y, double* result, F2 f2, int N1, int N2);
+__global__ void Ops(double* x, double* result, F1 f1, int N1, int N2);
+__global__ void Ops(double* x, double* y, double* result, F2 f2, int N1, int N2);
