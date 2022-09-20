@@ -1,4 +1,4 @@
-all: main.cu libMem.so
+all: main.cu libMem.so libFunc.so
 	nvcc -g main.cu -o main.exe -I./ -L./ -lMem
 libMem.so: Mem.cu Mem.h
 	nvcc -Xcompiler -fPIC -c Mem.cu

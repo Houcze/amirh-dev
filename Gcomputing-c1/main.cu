@@ -8,23 +8,6 @@
 
 #define NodeSuccess 1
 
-// Add
-Func::Func(int m, int n, double (*f)(double, double))
-{
-    wid = m;
-    len = n;
-    f2 = f;
-    InputNum = 2;
-}
-
-Func::Func(int m, int n, double (*f)(double))
-{
-    wid = m;
-    len = n;
-    f1 = f;
-    InputNum = 1;
-}
-
 __global__ void Ops(double* x, double* result, F1 f1, int N1, int N2)
 {
 	int x_index = blockIdx.x * blockDim.x + threadIdx.x;
