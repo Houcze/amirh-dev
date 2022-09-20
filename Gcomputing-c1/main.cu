@@ -10,6 +10,10 @@ __device__ double dsin(double x) {return sin(x);}
 __device__ double dcos(double x) {return cos(x);}
 __device__ double dtan(double x) {return sin(x) / cos(x);}
 __device__ double dcot(double x) {return cos(x) / sin(x);}
+__device__ F1 fp_sin = dsin;
+__device__ F1 fp_cos = dcos;
+__device__ F1 fp_tan = dtan;
+__device__ F1 fp_cot = dcot;
 
 int main(void)
 {
@@ -41,10 +45,6 @@ int main(void)
     rst = devMem(wid, len);
 
 
-    __device__ F1 fp_sin = dsin;
-    __device__ F1 fp_cos = dcos;
-    __device__ F1 fp_tan = dtan;
-    __device__ F1 fp_cot = dcot;
 
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
