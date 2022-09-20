@@ -1,5 +1,5 @@
 all: main.cu libMem.so libFunc.so
-	nvcc -g main.cu -o main.exe -I./ -L./ -lMem
+	nvcc -g main.cu -o main.exe -I./ -L./ -lMem -lFunc
 libMem.so: Mem.cu Mem.h
 	nvcc -Xcompiler -fPIC -c Mem.cu
 	nvcc -shared -o libMem.so Mem.o
