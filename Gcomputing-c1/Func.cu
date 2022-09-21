@@ -1,6 +1,52 @@
 #include <cuda_runtime.h>
 #include "Func.h"
+#include "Dtype.h"
 #define NodeSuccess 1
+
+uFunc::uFunc(double (*f)(double, double))
+{
+    cudaMemcpyFromSymbol(&f2, f, sizeof(F2));
+    InputNum = 2;
+}
+
+uFunc::uFunc(double (*f)(double))
+{
+    cudaMemcpyFromSymbol(&f1, f, sizeof(F1));
+    InputNum = 1;
+}
+
+F1 uFunc::get_f1()
+{
+    return f1;
+}
+
+F2 uFunc::get_f2()
+{
+    return f2;
+}
+
+int uFunc::getInputNum()
+{
+    return InputNum;
+}
+
+Func::Func(int m, int n, uFunc f)
+{
+    wid = m;
+    len = n;
+    InputNum = f.getInputNum();
+    switch (InputNum)
+    {
+    case 1:
+        f1 = f.get_f1();
+        break;
+    case 2:
+        f2 = f.get_f2();
+        break;
+    default:
+        break;
+    }
+}
 
 // Add
 Func::Func(int m, int n, double (*f)(double, double))

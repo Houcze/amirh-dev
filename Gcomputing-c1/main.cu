@@ -7,7 +7,7 @@
 #include "Func.h"
 #include "Dtype.h"
 #define NodeSuccess 1
-
+/*
 __device__ double dsin(double x) {return sin(x);}
 __device__ double dcos(double x) {return cos(x);}
 __device__ double dtan(double x) {return sin(x) / cos(x);}
@@ -16,7 +16,7 @@ __device__ F1 fp_sin = dsin;
 __device__ F1 fp_cos = dcos;
 __device__ F1 fp_tan = dtan;
 __device__ F1 fp_cot = dcot;
-
+*/
 int main(void)
 {
     int wid{6000};
@@ -50,7 +50,7 @@ int main(void)
 
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
-    
+    /*
     F1 fsin;
     F1 fcos;
     F1 ftan;
@@ -63,7 +63,11 @@ int main(void)
     Func Cos{wid, len, fcos};
     Func Tan{wid, len, ftan};
     Func Cot{wid, len, fcot};
-
+    */
+    Func Sin{wid, len, uSin};
+    Func Cos{wid, len, uCos};
+    Func Tan{wid, len, uTan};
+    Func Cot{wid, len, uCot};
     std::list<Func> fl
     {
         Sin,
