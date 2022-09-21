@@ -3,17 +3,17 @@
 #include "Dtype.h"
 #define NodeSuccess 1
 
-uFunc::uFunc(double (*f)(double, double))
+__device__ uFunc::uFunc(double (*f)(double, double))
 {
-    f2dev = *f;
-    cudaMemcpyFromSymbol(&f2, &f2dev, sizeof(F2));
+
+    cudaMemcpyFromSymbol(&f2, f, sizeof(F2));
     InputNum = 2;
 }
 
-uFunc::uFunc(double (*f)(double))
+__device__ uFunc::uFunc(double (*f)(double))
 {
     f1dev = *f;
-    cudaMemcpyFromSymbol(&f1, &f1dev, sizeof(F1));
+    cudaMemcpyFromSymbol(&f1, f, sizeof(F1));
     InputNum = 1;
 }
 
