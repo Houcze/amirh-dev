@@ -5,15 +5,15 @@
 
 uFunc::uFunc(double (*f)(double, double))
 {
-    // cudaMemcpyFromSymbol(&f2, *f, sizeof(F2));
-    f2 = f;
+    cudaMemcpyFromSymbol(&f2, *f, sizeof(F2));
+    // f2 = f;
     InputNum = 2;
 }
 
 uFunc::uFunc(double (*f)(double))
 {
-    // cudaMemcpyFromSymbol(&f1, *f, sizeof(F1));
-    f1 = f;
+    cudaMemcpyFromSymbol(&f1, *f, sizeof(F1));
+    // f1 = f;
     InputNum = 1;
 }
 
@@ -206,3 +206,8 @@ int Seq::IN(int INum)
     InputNum = INum;
     return EXIT_SUCCESS;
 }
+
+__device__ double dsin(double x) {return sin(x);}
+__device__ double dcos(double x) {return cos(x);}
+__device__ double dtan(double x) {return sin(x) / cos(x);}
+__device__ double dcot(double x) {return cos(x) / sin(x);}

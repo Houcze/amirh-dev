@@ -57,10 +57,11 @@ class Seq
         int run();
 };
 
-extern __device__ double dsin(double x) {return sin(x);}
-extern __device__ double dcos(double x) {return cos(x);}
-extern __device__ double dtan(double x) {return sin(x) / cos(x);}
-extern __device__ double dcot(double x) {return cos(x) / sin(x);}
+
+extern __device__ double dsin(double x);
+extern __device__ double dcos(double x); 
+extern __device__ double dtan(double x); 
+extern __device__ double dcot(double x); 
 
 uFunc uSin{dsin};
 uFunc uCos{dcos};
