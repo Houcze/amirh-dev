@@ -1,0 +1,1 @@
+__device__ pointer can't not be seprated to function call and function definition.
