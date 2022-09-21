@@ -7,6 +7,8 @@ class uFunc
 {
     private:
         int InputNum;
+        __device__ F1 f1dev;
+        __device__ F2 f2dev;
         F1 f1;
         F2 f2;
     public:

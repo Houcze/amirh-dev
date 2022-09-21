@@ -5,15 +5,15 @@
 
 uFunc::uFunc(double (*f)(double, double))
 {
-    //cudaMemcpyFromSymbol(&f2, *f, sizeof(F2));
-    f2 = f;
+    f2dev = f;
+    cudaMemcpyFromSymbol(&f2, f2dev, sizeof(F2));
     InputNum = 2;
 }
 
 uFunc::uFunc(double (*f)(double))
 {
-    //cudaMemcpyFromSymbol(&f1, *f, sizeof(F1));
-    f1 = f;
+    f1dev = f;
+    cudaMemcpyFromSymbol(&f1, f1dev, sizeof(F1));
     InputNum = 1;
 }
 
