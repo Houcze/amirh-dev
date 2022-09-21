@@ -72,8 +72,9 @@ extern __device__ F1 fp_cos = dcos;
 extern __device__ F1 fp_tan = dtan;
 extern __device__ F1 fp_cot = dcot;
 
+/*
 uFunc uSin{dsin};
 uFunc uCos{dcos};
 uFunc uTan{dtan};
 uFunc uCot{dcot};
-
+*/

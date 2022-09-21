@@ -5,7 +5,6 @@
 
 uFunc::uFunc(double (*f)(double, double))
 {
-
     cudaMemcpyFromSymbol(&f2, f, sizeof(F2));
     InputNum = 2;
 }
