@@ -63,6 +63,7 @@ int main(void)
     Func Cos{wid, len, fcos};
     Func Tan{wid, len, ftan};
     Func Cot{wid, len, fcot};
+    
     /*
     Func Sin{wid, len, uSin};
     Func Cos{wid, len, uCos};

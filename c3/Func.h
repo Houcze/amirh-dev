@@ -56,17 +56,21 @@ class Seq
         int run();
 };
 
-#ifndef dsin dcos dtan dcot
+/*
 extern __device__ double dsin(double x);
 extern __device__ double dcos(double x); 
 extern __device__ double dtan(double x); 
 extern __device__ double dcot(double x); 
+*/
+extern __device__ double dsin(double x) {return sin(x);}
+extern __device__ double dcos(double x) {return cos(x);}
+extern __device__ double dtan(double x) {return sin(x) / cos(x);}
+extern __device__ double dcot(double x) {return cos(x) / sin(x);}
 
 extern __device__ F1 fp_sin = dsin;
 extern __device__ F1 fp_cos = dcos;
 extern __device__ F1 fp_tan = dtan;
 extern __device__ F1 fp_cot = dcot;
-#endif
 
 uFunc uSin{dsin};
 uFunc uCos{dcos};

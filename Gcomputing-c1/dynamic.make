@@ -1,12 +1,10 @@
-all: main.cu libMem.so libFunc.so
-	nvcc -g main.cu -o main.exe -I./ -L./ -lMem -lFunc
+all: main.o libMem.so Func.o
+	nvcc -g main.o Func.o -o main.exe -I./ -L./ -lMem
 libMem.so: Mem.cu Mem.h
 	nvcc -Xcompiler -fPIC -c Mem.cu
 	nvcc -shared -o libMem.so Mem.o
 	rm Mem.o
-libFunc.so: Func.cu Func.h
-	nvcc -Xcompiler -fPIC -c Func.cu
-	nvcc -shared -o libFunc.so Func.o
-	rm Func.o
+%.o: main.cu Func.cu
+	nvcc -x cu -I./ -dc $< -o $@
 clean:
 	rm main.exe libFunc.so libMem.so
