@@ -1,0 +1,1 @@
+void Add(double* x, double* y, double* result, int N1, int N2);

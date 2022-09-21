@@ -1,7 +1,6 @@
 #include <list>
 #include <cuda_runtime.h>
-typedef double (*F1)(double);
-typedef double (*F2)(double, double);
+#include "Dtype.h"
 
 class Func
 {
@@ -41,5 +40,5 @@ class Seq
         int run();
 };
 
-__global__ void Ops(double* x, double* result, F1 f1, int N1, int N2);
-__global__ void Ops(double* x, double* y, double* result, F2 f2, int N1, int N2);
+
+

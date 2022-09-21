@@ -5,9 +5,8 @@
 #include <cuda_runtime.h>
 #include "Mem.h"
 #include "Func.h"
-
+#include "Dtype.h"
 #define NodeSuccess 1
-
 
 __device__ double dsin(double x) {return sin(x);}
 __device__ double dcos(double x) {return cos(x);}
@@ -51,6 +50,7 @@ int main(void)
 
     // Func Add{wid, len, add};
     // Func Sub{wid, len, sub};
+    
     F1 fsin;
     F1 fcos;
     F1 ftan;
