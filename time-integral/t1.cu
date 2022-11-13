@@ -18,7 +18,9 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
     if(index < d.x * d.y)
     {
         result[index] = 0.;
+
     }
+
     i = 1;
     j = 0;
     if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
@@ -51,6 +53,8 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
         result[index + i * d.y + j] += phi[index];
     }     
 
+
+  
     if(index < d.x * d.y)
     {
         result[index] -= 4 * phi[index];
@@ -66,14 +70,15 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
 int laplace_host(double* phi, double* result, int N1, int N2)
 {
 
-    laplace_dev<<<ceil(double(N1 * N2) / 128), 128>>>(phi, result, make_int2(N1, N2));
+    laplace_dev<<<ceil(double(N1 * N2) / 32), 32>>>(phi, result, make_int2(N1, N2));
+
     return EXIT_SUCCESS;
 }
 
 int main(void)
 {
-    int N1{64};
-    int N2{48};
+    int N1{6};
+    int N2{6};
     double h{0.1};
     double* init_host;
     double* result_host;
@@ -88,14 +93,14 @@ int main(void)
     {
         for(int j=0; j<N2; j++)
         {
-            //init_host[i * N2 + j] = 1.;
+            init_host[i * N2 + j] = 1.;
             result_host[i * N2 + j] = 0.;
         }
     }
 
     char filepath[] = "./input.nc";
     char varname[] = "temperature";
-    netcdf::ds(init_host, filepath, varname);
+    // netcdf::ds(init_host, filepath, varname);
     /********************************************************************************************************/
     std::ofstream check_init;
     check_init.open("./init.txt");
