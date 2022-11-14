@@ -3,9 +3,10 @@
 #include <cuda_runtime.h>
 #include <fstream>
 #include <string>
+#include <cmath>
 #include <io/netcdf>
 
-__global__ void laplace_dev(double* phi, double* result, int2 d)
+__global__ void laplace_dev(double* phi, double* result, double* s1, double* s2, int2 d)
 {
     int x_index = blockIdx.x * blockDim.x + threadIdx.x;
     int y_index = blockIdx.y * blockDim.y + threadIdx.y;
@@ -18,25 +19,36 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
     if(index < d.x * d.y)
     {
         result[index] = 0.;
+        s1[index] = 0.;
+        s2[index] = 0.;
 
     }
-
+    
     i = 1;
     j = 0;
     if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
     {
 
-        result[index + i * d.y + j] += phi[index];
+        s1[index + i * d.y + j] += phi[index];
     }
-
+    
+    /*
     i = -1;
     j = 0;
     if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
     {
 
-        result[index + i * d.y + j] += phi[index];
+        s2[index + i * d.y + j] += phi[index];
     }     
+    */
+    
+    if(index < d.x * d.y)
+    {
+        result[index] = s1[index]; //+ s2[index];
+    }
 
+    
+    /*
     i = 0;
     j = 1;
     if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
@@ -44,7 +56,8 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
 
         result[index + i * d.y + j] += phi[index];
     }
-
+    
+    
     i = 0;
     j = -1;
     if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
@@ -52,6 +65,8 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
 
         result[index + i * d.y + j] += phi[index];
     }     
+    */
+    /*
 
 
   
@@ -59,6 +74,7 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
     {
         result[index] -= 4 * phi[index];
     }
+    */
     
 }
 
@@ -69,16 +85,20 @@ __global__ void laplace_dev(double* phi, double* result, int2 d)
 */
 int laplace_host(double* phi, double* result, int N1, int N2)
 {
-
-    laplace_dev<<<ceil(double(N1 * N2) / 32), 32>>>(phi, result, make_int2(N1, N2));
-
+    double* s1;
+    double* s2;
+    cudaMalloc(&s1, N1 * N2 * sizeof(double));
+    cudaMalloc(&s2, N1 * N2 * sizeof(double));
+    laplace_dev<<<std::ceil(double(N1 * N2) / 128), 128>>>(phi, result, s1, s2, make_int2(N1, N2));
+    cudaFree(s1);
+    cudaFree(s2);
     return EXIT_SUCCESS;
 }
 
 int main(void)
 {
-    int N1{6};
-    int N2{6};
+    int N1{60};
+    int N2{60};
     double h{0.1};
     double* init_host;
     double* result_host;
@@ -96,6 +116,15 @@ int main(void)
             init_host[i * N2 + j] = 1.;
             result_host[i * N2 + j] = 0.;
         }
+    }
+
+    for(int i=0; i<N1; i++)
+    {
+        for(int j=0; j<N2; j++)
+        {
+            std::cout << init_host[i * N2 + j] << '\t';
+        }
+        std::cout << '\n';
     }
 
     char filepath[] = "./input.nc";
