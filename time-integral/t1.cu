@@ -9,10 +9,11 @@
 __global__ void laplace_dev(double* phi, double* result, double* s1, double* s2, int2 d)
 {
     int x_index = blockIdx.x * blockDim.x + threadIdx.x;
-    int y_index = blockIdx.y * blockDim.y + threadIdx.y;
+    //int y_index = blockIdx.y * blockDim.y + threadIdx.y;
 
-    int index = y_index * d.x + x_index;
-
+    // int index = y_index * d.x + x_index;
+    // int index = threadIdx.x;
+    int index = x_index;
     int i;
     int j;
 
@@ -23,14 +24,23 @@ __global__ void laplace_dev(double* phi, double* result, double* s1, double* s2,
         s2[index] = 0.;
 
     }
-    
+    /*
     i = 1;
     j = 0;
-    if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
+    if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0) && (index < d.x * d.y))
     {
 
-        s1[index + i * d.y + j] += phi[index];
+        s1[index + i * d.y + j] = phi[index];
     }
+    */
+    i = 1;
+    j = 0;
+    
+    if(((index / d.y + i) < d.x) && ((index / d.y + i) >= 0) && ((index % d.y + j) < d.y) && ((index % d.y + j) >= 0))
+    {
+        s1[index + i * d.y + j] = phi[index];
+    }
+
     
     /*
     i = -1;
@@ -38,13 +48,13 @@ __global__ void laplace_dev(double* phi, double* result, double* s1, double* s2,
     if((((index % d.y) + j) < d.y) && (((index % d.y) + j) >= 0) && (((index / d.y) + i) < d.x) && (((index / d.y) + i) >= 0))
     {
 
-        s2[index + i * d.y + j] += phi[index];
+        s2[index + i * d.y + j] = phi[index];
     }     
     */
     
     if(index < d.x * d.y)
     {
-        result[index] = s1[index]; //+ s2[index];
+        result[index] = s1[index]; // + s2[index];
     }
 
     
@@ -89,7 +99,7 @@ int laplace_host(double* phi, double* result, int N1, int N2)
     double* s2;
     cudaMalloc(&s1, N1 * N2 * sizeof(double));
     cudaMalloc(&s2, N1 * N2 * sizeof(double));
-    laplace_dev<<<std::ceil(double(N1 * N2) / 128), 128>>>(phi, result, s1, s2, make_int2(N1, N2));
+    laplace_dev<<<std::ceil(double(N1 * N2) / 1024), 1024>>>(phi, result, s1, s2, make_int2(N1, N2));
     cudaFree(s1);
     cudaFree(s2);
     return EXIT_SUCCESS;
@@ -97,8 +107,8 @@ int laplace_host(double* phi, double* result, int N1, int N2)
 
 int main(void)
 {
-    int N1{60};
-    int N2{60};
+    int N1{10};
+    int N2{10};
     double h{0.1};
     double* init_host;
     double* result_host;
