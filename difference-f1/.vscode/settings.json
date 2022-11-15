@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "netcdf": "cpp",
+        "list": "cpp",
+        "vector": "cpp"
+    }
+}

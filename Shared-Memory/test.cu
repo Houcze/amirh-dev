@@ -14,35 +14,62 @@
     的范式区分，前者是func的cpu部分，后者是gpu部分
 */
 
-__global__ void bias2d_dev(double* input, double* output, int d1, int d2, int i, int j)
+__global__ void bias2d_dev(double* input, double* output, int d1, int d2)
 {
-    extern __shared__ int s[];
     int x_index = blockIdx.x * blockDim.x + threadIdx.x;
     int y_index = blockIdx.y * blockDim.y + threadIdx.y;
 
     int index = y_index * d1 + x_index;
+    int i;
+    int j;
+   
+    i = 0;
+    j = 1;
+    if((((index % d2) + j) < d2) && (((index % d2) + j) >= 0) && (((index / d2) + i) < d1) && (((index / d2) + i) >= 0))
+    {
 
-   
-    if((((index % d2) + j) < d2) && (((index % d2) + j) >= 0))
-    {
-        s[index + j] = input[index];
+        output[index + i * d2 + j] += input[index];
     }
-    
-    if((((index / d2) + i) < d1) && (((index / d2) + i) >= 0))
+
+    i = 0;
+    j = -1;
+    if((((index % d2) + j) < d2) && (((index % d2) + j) >= 0) && (((index / d2) + i) < d1) && (((index / d2) + i) >= 0))
     {
-        output[index + i * d2] = s[index];
+
+        output[index + i * d2 + j] += input[index];
     }
-   
+
+    i = 1;
+    j = 0;
+    if((((index % d2) + j) < d2) && (((index % d2) + j) >= 0) && (((index / d2) + i) < d1) && (((index / d2) + i) >= 0))
+    {
+
+        output[index + i * d2 + j] += input[index];
+    }
+
+    i = -1;
+    j = 0;
+    if((((index % d2) + j) < d2) && (((index % d2) + j) >= 0) && (((index / d2) + i) < d1) && (((index / d2) + i) >= 0))
+    {
+
+        output[index + i * d2 + j] += input[index];
+    }
+
+    if(index < d1 * d2)
+    {
+        output[index] -= 4 * input[index];
+    }
+       
 }
 
 
-int bias2d_host(double* base, double* result, int d1, int d2, int i, int j)
+int bias2d_host(double* base, double* result, int d1, int d2)
 {
 	/*
 	* 该函数只针对2d数组进行定义，但是不检查数组形状
 	*/
     cudaMemset(result, 0, sizeof(double) * d1 * d2);
-	bias2d_dev<<<ceil(double(d1 * d2) / 128), 128, d1 * d2 * sizeof(double)>>>(base, result, d1, d2, i, j);
+	bias2d_dev<<<ceil(double(d1 * d2) / 128), 128>>>(base, result, d1, d2);
     // std::cout << __func__ << std::endl;
 	return EXIT_SUCCESS;
 }
@@ -53,8 +80,8 @@ int main(void)
     /*------------------------------------- INIT -----------------------------------------------------------*/
     double* result_host;
     double* result_dev;
-    int N1{100};
-    int N2{100};
+    int N1{3};
+    int N2{4};
     result_host = (double*) malloc(N1 * N2 * sizeof(double));
     cudaMalloc(&result_dev, N1 * N2 * sizeof(double));
     /*------------------------------------------------------------------------------------------------------*/
@@ -88,7 +115,7 @@ int main(void)
         反之为负
     */
 
-    bias2d_host(p_dev, result_dev, N1, N2, -1, -1);
+    bias2d_host(p_dev, result_dev, N1, N2);
     
     cudaMemcpy(result_host, result_dev, sizeof(double) * N1 * N2, cudaMemcpyDeviceToHost);
     
